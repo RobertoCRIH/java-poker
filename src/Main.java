@@ -10,11 +10,13 @@ public class Main {
 
         myHand.add("2H");
         myHand.add("4H");
-        myHand.add("5D");
+        myHand.add("QD");
         myHand.add("2S");
-        myHand.add("KC");
+        myHand.add("QC");
 
-        System.out.println(hasPair(myHand));
+        myHand.sort(null);
+
+        System.out.println(hasTwoPair(myHand));
 
     }
 
@@ -35,25 +37,21 @@ public class Main {
         //La respuesta que se va a regresar
         ArrayList<String> response = new ArrayList<String>();
 
-        //Esta lista solo contiene el valor de la carta, no el palo.
-        ArrayList<Character> onlyNumbers = getOnlyNumbers(hand);
-        onlyNumbers.sort(null);
-
         //Vamos uno por uno comparando laa carta con la siguiente, como estan acomodados, si hay dos iguales, can a estar
         //uno al lado del otro.
-        for (int i = 0; i < (onlyNumbers.size() - 1); i++) {
-            char thisCard = onlyNumbers.get(i);
-            char nextCard = onlyNumbers.get(i + 1);
+        for (int i = 0; i < (hand.size() - 1); i++) {
+            String thisCard = hand.get(i);
+            String nextCard = hand.get(i + 1);
 
             //Si son iguales...
-            if (thisCard == nextCard){
+            if (thisCard.charAt(0) == nextCard.charAt(0)){
                 //Acomodamos la mano para que sea igual que la mano con solo numeros.
                 hand.sort(null);
 
                 //Agregamos las cartas a la respuesta.
-                response.add( hand.get(i) );
-                response.add( hand.get(i+1) );
-                
+                response.add( thisCard );
+                response.add( nextCard );
+
                 return response;
             }
         }
@@ -61,15 +59,33 @@ public class Main {
         return response;
     }
 
-    private static boolean hasTwoPair( ArrayList<String> hand ){
+    private static ArrayList<String> hasTwoPair( ArrayList<String> hand ){
 
-        //Esta lista solo contiene el valor de la carta, no el palo.
-        ArrayList<Character> onlyNumbers = getOnlyNumbers(hand);
-        onlyNumbers.sort(null);
+        ArrayList<String> response = new ArrayList<String>();
 
+        //Conseguimos el primer par.
+        ArrayList<String> firstPair = hasPair(hand);
 
+        //Aqui checamos si hubo un primer par. Si no, regresa la lista vacia.
+        if (firstPair.isEmpty()){
+            return response;
+        }
 
-        return false;
+        hand.removeAll(firstPair);
+        //System.out.println("CARDS LEFT: " + hand);
+
+        ArrayList<String> secondPair = hasPair(hand);
+
+        //Si el segundo par tambien existe se agregan ambos pares a la respuesta y se regresa.
+        if( !secondPair.isEmpty() ){
+            response.add(firstPair.get(0));
+            response.add(firstPair.get(1));
+
+            response.add(secondPair.get(0));
+            response.add(secondPair.get(1));
+        }
+
+        return response;
     }
 
 
