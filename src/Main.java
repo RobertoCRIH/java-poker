@@ -11,26 +11,15 @@ public class Main {
         myHand.add("2H");
         myHand.add("4H");
         myHand.add("QD");
-        myHand.add("2S");
+        myHand.add("QS");
         myHand.add("QC");
 
         myHand.sort(null);
 
-        System.out.println(hasTwoPair(myHand));
+        System.out.println(hasThreeOfKind(myHand));
 
     }
 
-    //Esta funcion regresa solo los numeros de la mano de poker.
-    private static ArrayList<Character> getOnlyNumbers( ArrayList<String> hand ){
-        //Esta es una lista que solo contiene los numeros.
-        ArrayList<Character> onlyNumbers = new ArrayList<Character>();
-
-        hand.forEach((card) -> {
-            onlyNumbers.add(card.charAt(0));
-        });
-
-        return onlyNumbers;
-    }
 
     //Checa si hay un par dentro de la mano. Regresa las dos cartas que conforman el par
     private static ArrayList<String> hasPair( ArrayList<String> hand ){
@@ -59,6 +48,7 @@ public class Main {
         return response;
     }
 
+    //Chaca si hay dos pares en la mano. Regresa una lista de 4 cartas.
     private static ArrayList<String> hasTwoPair( ArrayList<String> hand ){
 
         ArrayList<String> response = new ArrayList<String>();
@@ -83,6 +73,28 @@ public class Main {
 
             response.add(secondPair.get(0));
             response.add(secondPair.get(1));
+        }
+
+        return response;
+    }
+
+    private static ArrayList<String> hasThreeOfKind( ArrayList<String> hand){
+        ArrayList<String> response = new ArrayList<String>();
+
+        hand.sort(null);
+
+        for (int i = 0; i < (hand.size() - 2 ); i++) {
+            String thisCard = hand.get(i);
+            String nextCard = hand.get(i+1);
+            String nextNextCard = hand.get(i+2);
+
+            if ( (thisCard.charAt(0) == nextCard.charAt(0)) && (thisCard.charAt(0) == nextNextCard.charAt(0)) ){
+                response.add(thisCard);
+                response.add(nextCard);
+                response.add(nextNextCard);
+
+                return response;
+            }
         }
 
         return response;
