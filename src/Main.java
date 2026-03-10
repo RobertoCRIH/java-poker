@@ -9,14 +9,14 @@ public class Main {
         //Esta es la mano que tiene el jugador.
         ArrayList<String> myHand = new ArrayList<String>();
 
-        myHand.add("2H");
-        myHand.add("DH");
-        myHand.add("RH");
-        myHand.add("DH");
-        myHand.add("RC");
+        myHand.add("6C");
+        myHand.add("5S");
+        myHand.add("5D");
+        myHand.add("9H");
+        myHand.add("9C");
 
         myHand.sort(null);
-        System.out.println(hasFullHouse(myHand));
+        getBestHand(myHand);
 
     }
 
@@ -74,7 +74,7 @@ public class Main {
             response.add(secondPair.get(0));
             response.add(secondPair.get(1));
         }
-
+        hand.addAll(response);
         return response;
     }
 
@@ -89,10 +89,13 @@ public class Main {
             String nextCard = hand.get(i+1);
             String nextNextCard = hand.get(i+2);
 
+            System.out.println(i + ": " + thisCard + nextCard + nextNextCard);
+
             if ( (thisCard.charAt(0) == nextCard.charAt(0)) && (thisCard.charAt(0) == nextNextCard.charAt(0)) ){
                 response.add(thisCard);
                 response.add(nextCard);
                 response.add(nextNextCard);
+
 
                 return response;
             }
@@ -133,12 +136,12 @@ public class Main {
 
         if (hasAce){
             if ( (handString.equals("2345")) || (handString.equals("DJQR")) ){
-                System.out.println("Straight with Ace!");
+                //System.out.println("Straight with Ace!");
                 response = hand;
                 return response;
             }
         } else if (straightOrder.contains(handString)) {
-            System.out.println("Straight!");
+            //System.out.println("Straight!");
             response = hand;
         }
 
@@ -168,7 +171,6 @@ public class Main {
     /// Checa si la mano tiene un par y una tercia. Si lo tiene, regresa una lista de cinco elementos.
     private static ArrayList<String> hasFullHouse( ArrayList<String> hand ){
 
-
         //Checamos si hay una tercia.
         ArrayList<String> threeOfKind = hasThreeOfKind(hand);
 
@@ -184,12 +186,135 @@ public class Main {
 
         //Si esta vacio regresamos respuesta negativa.
         if (pair.isEmpty()) {
+            //Reseteamos la mano.
+            hand.addAll(threeOfKind);
             return new ArrayList<String>();
         }
 
         //Agregamos a la tercia el par para poder mandar las cinco cartas juntas de respuesta.
         threeOfKind.addAll(pair);
 
+        //Regresamos todas las cartas a la mano
+        hand.addAll(threeOfKind);
+
         return threeOfKind;
+    }
+
+    /// Checa si hay cuatro cartas iguales dentro de la mano. Si la respuesta es positiva, regresa una lista de cuatro cartas.
+    private static ArrayList<String> hasFourOfKind( ArrayList<String> hand ){
+        ArrayList<String> response = new ArrayList<String>();
+
+        ArrayList<String> handCopy = hand;
+        handCopy.sort(null);
+
+        char firstCard = handCopy.getFirst().charAt(0);
+        char secondCard = handCopy.get(1).charAt(0);
+        char thirdCard = handCopy.get(2).charAt(0);
+        char fourthCard = handCopy.get(3).charAt(0);
+        char fifthCard = handCopy.get(4).charAt(0);
+
+        if ((firstCard == secondCard) && (firstCard == thirdCard) && (firstCard == fourthCard)){
+            response.add(hand.get(0));
+            response.add(hand.get(1));
+            response.add(hand.get(2));
+            response.add(hand.get(3));
+
+            return response;
+        }
+
+        if ((secondCard == thirdCard) && (secondCard == fourthCard) && (secondCard == fifthCard)){
+            response.add(hand.get(4));
+            response.add(hand.get(1));
+            response.add(hand.get(2));
+            response.add(hand.get(3));
+            return response;
+        }
+
+        return response;
+    }
+
+    private static ArrayList<String> hasStraightFlush(ArrayList<String> hand){
+
+        hand.sort(null);
+
+        ArrayList<String> straight = hasStraight(hand);
+        ArrayList<String> flush = hasFlush(hand);
+
+        if ( (straight.isEmpty()) || (flush.isEmpty()) ){
+            return new ArrayList<String>();
+        }
+
+        return hand;
+    }
+
+    /// Tiene un Straight de Color que va del Diez al As.
+    private static ArrayList<String> hasRoyalFlush(ArrayList<String> hand){
+
+        hand.sort(null);
+
+        ArrayList<String> straightFlush = hasStraightFlush(hand);
+
+        if (straightFlush.isEmpty()){
+            return new ArrayList<String>();
+        }
+
+        String handInString = "";
+
+        for (int i = 0; i < straightFlush.size(); i++) {
+            handInString = handInString + hand.get(i).charAt(0);
+        }
+
+        if (!handInString.equals("ADJQR")){
+            return new ArrayList<String>();
+        }
+
+        return hand;
+    }
+    /// Regresa la carta mas alta dentro de un array de un objeto.
+    private static ArrayList<String> hasHighCard( ArrayList<String> hand ){
+        hand.sort(null);
+        ArrayList<String> response = new ArrayList<String>();
+
+        for (int i = 0; i < hand.size(); i++) {
+            char value = hand.get(i).charAt(0);
+
+            if (value == 'A'){
+                response.add(hand.get(i));
+                return response;
+            }
+        }
+
+        response.add(hand.getLast());
+
+        return response;
+
+    }
+
+    /// Checa todas las posibles combinaciones de manos.
+    private static void getBestHand( ArrayList<String> hand ){
+        System.out.println(hand);
+
+        ArrayList<String> handToCheck = new ArrayList<String>();
+
+
+        if( !hasRoyalFlush(hand).isEmpty() ){
+            System.out.println("ROYAL FLUSH: " + hasRoyalFlush(hand) );
+        } else if (!hasStraightFlush(hand).isEmpty()) {
+            System.out.println("STRAIGHT FLUSH: " + hasStraightFlush(hand));
+        } else if (!hasFourOfKind(hand).isEmpty()) {
+            System.out.println("FOUR OF A KIND: " + hasFourOfKind(hand));
+        } else if (!hasFullHouse(hand).isEmpty()) {
+            System.out.println("FULL HOUSE: " + hasFullHouse(hand));
+        } else if (!hasFlush(hand).isEmpty()) {
+            System.out.println("FLUSH: " + hasFlush(hand));
+        } else if (!hasStraight(hand).isEmpty()) {
+            System.out.println("STRAIGHT: " + hasStraight(hand));
+        } else if (!hasThreeOfKind(hand).isEmpty()) {
+            System.out.println("THREE OF KIND: " + hasThreeOfKind(hand));
+        } else if (!hasTwoPair(hand).isEmpty()) {
+            System.out.println("TWO PAIR: " + hasTwoPair(hand));
+        }
+        System.out.println(hand);
+
     }
 }
