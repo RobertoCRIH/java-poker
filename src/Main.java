@@ -11,8 +11,8 @@ public class Main {
 
         myHand.add("6C");
         myHand.add("5S");
-        myHand.add("5D");
-        myHand.add("9H");
+        myHand.add("4D");
+        myHand.add("DH");
         myHand.add("9C");
 
         myHand.sort(null);
@@ -73,6 +73,8 @@ public class Main {
 
             response.add(secondPair.get(0));
             response.add(secondPair.get(1));
+        } else {
+            hand.addAll(firstPair);
         }
         hand.addAll(response);
         return response;
@@ -89,7 +91,7 @@ public class Main {
             String nextCard = hand.get(i+1);
             String nextNextCard = hand.get(i+2);
 
-            System.out.println(i + ": " + thisCard + nextCard + nextNextCard);
+            //System.out.println(i + ": " + thisCard + nextCard + nextNextCard);
 
             if ( (thisCard.charAt(0) == nextCard.charAt(0)) && (thisCard.charAt(0) == nextNextCard.charAt(0)) ){
                 response.add(thisCard);
@@ -313,8 +315,11 @@ public class Main {
             System.out.println("THREE OF KIND: " + hasThreeOfKind(hand));
         } else if (!hasTwoPair(hand).isEmpty()) {
             System.out.println("TWO PAIR: " + hasTwoPair(hand));
+        } else if(!hasPair(hand).isEmpty()){
+            System.out.println("PAIR: " + hasPair(hand));
+        } else {
+            System.out.println("HIGHEST CARD: " + hasHighCard(hand));
         }
-        System.out.println(hand);
 
     }
 }
